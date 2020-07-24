@@ -55,7 +55,7 @@ class EventSource extends Stream<Event> {
   EventSourceDecoder _decoder;
   String _body;
   String _method;
-
+  static EventSource _eventSource;
 
   /// Create a new EventSource by connecting to the specified url.
   static Future<EventSource> connect(url,
@@ -66,9 +66,10 @@ class EventSource extends Stream<Event> {
     lastEventId = lastEventId ?? "";
     body = body ?? "";
     method = method ?? "GET";
-    EventSource es = new EventSource._internal(url, client, lastEventId, headers, body, method);
-    await es._start();
-    return es;
+    if(_eventSource == null)
+      _eventSource = new EventSource._internal(url, client, lastEventId, headers, body, method);
+    await _eventSource._start();
+    return _eventSource;
   }
 
   EventSource._internal(this.url, this.client, this._lastEventId, this.headers, this._body, this._method) {
